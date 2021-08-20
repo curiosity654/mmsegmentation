@@ -65,8 +65,12 @@ def single_gpu_test(model,
 
         if show or out_dir:
             img_tensor = data['img'][0]
+            rgb_tensor = img_tensor[:,:3,:,:]
             img_metas = data['img_metas'][0].data[0]
-            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+            mean = [123.675, 116.28, 103.53]
+            std = [58.395, 57.12, 57.375]
+            # TODO support for both rgb and rgbd
+            imgs = tensor2imgs(rgb_tensor, mean, std)
             assert len(imgs) == len(img_metas)
 
             for img, img_meta in zip(imgs, img_metas):

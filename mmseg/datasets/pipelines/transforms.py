@@ -480,14 +480,21 @@ class RGBDNormalize(object):
         self.std = np.array(std, dtype=np.float32)
         self.to_rgb = to_rgb
 
-    def _norm(img, mean, std, to_rgb=True):
+    def _norm(self, img, mean, std, to_rgb=True):
         assert img.dtype != np.uint8
-        mean = np.float64(mean.reshape(1, -1))
-        stdinv = 1 / np.float64(std.reshape(1, -1))
+        mean = np.float64(mean)
+        stdinv = 1 / np.float64(std)
+
         if to_rgb:
-            cv2.cvtColor(img[:,:,:3], cv2.COLOR_BGR2RGB, img[:,:,:3])  # inplace
-        cv2.subtract(img, mean, img)  # inplace
-        cv2.multiply(img, stdinv, img)  # inplace
+            rgb = np.zeros_like(img[:,:,:3])
+            cv2.cvtColor(img[:,:,:3], cv2.COLOR_BGR2RGB, rgb)
+            img[:,:,:3] = rgb
+        # TODO more efficient
+        for i in range(4):
+            img[:,:,i] -= mean[i]
+            img[:,:,i] *= stdinv[i]
+        # cv2.subtract(img, mean, img)  # inplace
+        # cv2.multiply(img, stdinv, img)  # inplace
         return img
 
     def __call__(self, results):
@@ -500,7 +507,6 @@ class RGBDNormalize(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
-
         results['img'] = self._norm(results['img'], self.mean, self.std,
                                           self.to_rgb)
         results['img_norm_cfg'] = dict(

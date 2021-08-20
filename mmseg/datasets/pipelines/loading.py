@@ -141,15 +141,15 @@ class LoadRGBDFromFile(object):
             img_bytes, flag=self.color_type, backend=self.imdecode_backend)
         if self.to_float32:
             img = img.astype(np.float32)
-        
         depthname = osp.join(results['depth_prefix'],
-                                results['img_info']['filename'].rstrip(results['img_suffix']+results['depth_suffix']))
+                                results['img_info']['filename'].rstrip(results['img_suffix'])+results['depth_suffix'])
         depth_bytes = self.file_client.get(depthname)
         depth = mmcv.imfrombytes(
             depth_bytes, flag='grayscale', backend=self.imdecode_backend)
+        depth = depth.astype(np.float32)
 
         # add depth channel
-        img = np.c_[img, depth]
+        img = np.dstack([img, depth])
 
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']

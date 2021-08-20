@@ -15,19 +15,20 @@ class ICIPRGBDataset(CustomDataset):
 
     PALETTE = [[0, 0, 0], [255, 0, 0], [0, 255, 0]]
 
-    def __init__(self, **kwargs):
+    def __init__(self, test_outpath=None, **kwargs):
         super(ICIPRGBDataset, self).__init__(
             img_suffix='.jpg',
             seg_map_suffix='.png',
             reduce_zero_label=False,
             **kwargs)
         assert osp.exists(self.img_dir)
+        self.test_outpath = test_outpath
 
     def format_results(self, results, **kwargs):
         for meta, mask in zip(self.img_infos, results):
             im = Image.fromarray(np.uint8(mask))
             # TODO use kwargs
-            im.save(osp.join("/root/code/mmsegmentation/work_dirs/pspnet_icip_all/output", meta['filename'].rstrip('.jpg'))+'.png')
+            im.save(osp.join(self.test_outpath, meta['filename'].rstrip('.jpg'))+'.png')
 
 @DATASETS.register_module()
 class ICIPRGBDDataset(CustomDataset):
@@ -38,14 +39,15 @@ class ICIPRGBDDataset(CustomDataset):
 
     PALETTE = [[0, 0, 0], [255, 0, 0], [0, 255, 0]]
 
-    def __init__(self, depth_dir, depth_suffix, **kwargs):
-        super(ICIPRGBDataset, self).__init__(
-            img_suffix='.jpg',
-            seg_map_suffix='.png',
-            reduce_zero_label=False,
-            **kwargs)
-        self.depth_dir = depth_dir
+    def __init__(self, depth_dir, depth_suffix, test_outpath=None, **kwargs):
+        super(ICIPRGBDDataset, self).__init__(
+                img_suffix='.jpg',
+                seg_map_suffix='.png',
+                reduce_zero_label=False,
+                **kwargs)
+        self.depth_dir = osp.join(self.data_root, depth_dir)
         self.depth_suffix = depth_suffix
+        self.test_outpath = test_outpath
         assert osp.exists(self.img_dir)
 
     def pre_pipeline(self, results):
@@ -63,4 +65,4 @@ class ICIPRGBDDataset(CustomDataset):
         for meta, mask in zip(self.img_infos, results):
             im = Image.fromarray(np.uint8(mask))
             # TODO use kwargs
-            im.save(osp.join("/root/code/mmsegmentation/work_dirs/pspnet_icip_all/output", meta['filename'].rstrip('.jpg'))+'.png')
+            im.save(osp.join(self.test_outpath, meta['filename'].rstrip('.jpg'))+'.png')
