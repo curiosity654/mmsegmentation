@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/datasets/icip_rgb_all.py',
+    '../_base_/datasets/icip_rgbd_all.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_40k.py'
 ]
 
@@ -10,6 +10,7 @@ model = dict(
     pretrained='open-mmlab://resnet50_v1c',
     backbone=dict(
         type='ResNetV1c',
+        in_channels=4,
         depth=50,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
@@ -57,4 +58,4 @@ log_config = dict(
 
 evaluation = dict(interval=500, metric='mIoU')
 runner = dict(type='IterBasedRunner', max_iters=10000)
-checkpoint_config = dict(by_epoch=False, interval=1000)
+checkpoint_config = dict(by_epoch=False, interval=500)

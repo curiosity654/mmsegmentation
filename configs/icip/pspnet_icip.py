@@ -1,10 +1,10 @@
 _base_ = [
-    '../_base_/datasets/icip.py',
+    '../_base_/datasets/icip_rgb.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_40k.py'
 ]
 
 # model settings
-norm_cfg = dict(type='SyncBN', requires_grad=True)
+norm_cfg = dict(type='BN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
     pretrained='open-mmlab://resnet50_v1c',
