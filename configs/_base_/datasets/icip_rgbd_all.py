@@ -1,9 +1,9 @@
 # dataset settings
 dataset_type = 'ICIPRGBDDataset'
-data_root = 'data/ICIP/train'
-# TODO add norm for rgbd
+data_root = 'data/ICIP'
+
 img_norm_cfg = dict(
-    mean=[123.675, 116.28, 103.53, 100], std=[58.395, 57.12, 57.375, 55], to_rgb=True)
+    mean=[123.675, 116.28, 103.53, 808.17865614], std=[58.395, 57.12, 57.375, 943.49172682], to_rgb=True)
 img_scale = (640, 480)
 crop_size = (640, 480)
 train_pipeline = [
@@ -35,31 +35,32 @@ test_pipeline = [
 ]
 
 data = dict(
-    samples_per_gpu=12,
+    samples_per_gpu=6,
     workers_per_gpu=4,
     train=dict(
             type=dataset_type,
             data_root=data_root,
-            img_dir='rgb',
-            ann_dir='mask',
-            depth_dir='depth', 
+            img_dir='train/rgb',
+            ann_dir='train/mask',
+            depth_dir='train/depth', 
             depth_suffix='.png',
-            split='split/train.txt',
+            # split='split/train.txt',
             pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='rgb',
-        ann_dir='mask',
-        depth_dir='depth', 
+        img_dir='train/rgb',
+        ann_dir='train/mask',
+        depth_dir='train/depth', 
         depth_suffix='.png',
-        split='split/val.txt',
+        split='train/split/val.txt',
         pipeline=test_pipeline),
-    # no set now
+
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='rgb',
-        depth_dir='depth', 
+        img_dir='stage_two/rgb',
+        depth_dir='stage_two/depth', 
         depth_suffix='.png',
-        pipeline=test_pipeline))
+        pipeline=test_pipeline),
+        test_outpath='/root/code/mmsegmentation/work_dirs/pspnet_icip_all/output')

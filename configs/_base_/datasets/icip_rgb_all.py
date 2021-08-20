@@ -34,13 +34,13 @@ test_pipeline = [
 ]
 
 data = dict(
-    samples_per_gpu=12,
+    samples_per_gpu=6,
     workers_per_gpu=4,
     train=dict(
             type=dataset_type,
             data_root=data_root,
             img_dir='train/rgb',
-            ann_dir='mask',
+            ann_dir='train/mask',
             # split='split/train.txt',
             pipeline=train_pipeline),
     val=dict(
@@ -53,5 +53,6 @@ data = dict(
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='stage_two/rgb',
-        pipeline=test_pipeline))
+        img_dir='stage_one/rgb',
+        pipeline=test_pipeline,
+        test_outpath='/root/code/mmsegmentation/work_dirs/pspnet_icip_all/output'))
