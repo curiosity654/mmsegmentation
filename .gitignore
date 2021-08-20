@@ -116,3 +116,4 @@ mmseg/.mim
 
 # Pytorch
 *.pth
+wandb
